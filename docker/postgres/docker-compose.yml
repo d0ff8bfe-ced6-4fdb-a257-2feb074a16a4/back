@@ -2,16 +2,16 @@ version: '3.5'
 
 services:
 
-  nest:
-    container_name: nest_back
-    build: ../../
-    depends_on:
-      - postgres
-    ports:
-      - "3000:3000"
-    networks:
-      - postgres
-    restart: unless-stopped
+#  nest:
+#    container_name: nest_back
+#    build: ../../
+#    depends_on:
+#      - postgres
+#    ports:
+#      - "3000:3000"
+#    networks:
+#      - postgres
+#    restart: unless-stopped
 
   postgres:
     container_name: postgres_db
