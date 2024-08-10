@@ -11,14 +11,16 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(uuid())
-  email     String   @unique
+  id        String     @id @default(uuid())
+  email     String     @unique
   password  String?
-  img       String?  @default("")
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  img       String?    @default("")
+  createdAt DateTime   @default(now()) @map("created_at")
+  updatedAt DateTime   @updatedAt @map("updated_at")
   roles     Role[]
-  Token     Token[]
+  tokens    Token[]
+  projects  Project[]  @relation("ProjectContributors")
+  Document  Document[]
 
   @@map("users")
 }
@@ -33,7 +35,99 @@ model Token {
   @@map("tokens")
 }
 
+model Project {
+  id           String          @id @default(uuid())
+  startDate    DateTime
+  endDate      DateTime
+  type         ProjectTypeEnum
+  title        String
+  description  String
+  contributors User[]          @relation("ProjectContributors")
+  boards       Board[]
+
+  @@map("projects")
+}
+
+model Task {
+  id        String  @id @default(uuid())
+  task      String
+  completed Boolean
+  projectId String
+  Card      Card?   @relation(fields: [cardId], references: [id])
+  cardId    String?
+
+  @@map("tasks")
+}
+
+model Document {
+  id        String       @id @default(uuid())
+  name      String
+  createdAt DateTime     @default(now()) @map("created_at")
+  authorId  String
+  version   Int
+  access    Boolean
+  type      DocumentType
+  author    User         @relation(fields: [authorId], references: [id])
+
+  @@map("documents")
+}
+
+model Board {
+  id        String   @id @default(uuid())
+  name      String
+  cards     Card[]
+  Project   Project? @relation(fields: [projectId], references: [id])
+  projectId String?
+
+  @@map("boards")
+}
+
+model Card {
+  id          String    @id @default(uuid())
+  title       String
+  description String
+  timeStart   DateTime? @map("start_date")
+  timeEnd     DateTime? @map("end_date")
+  tasks       Task[]
+  tags        Tag[]
+  Board       Board?    @relation(fields: [boardId], references: [id])
+  boardId     String?
+
+  @@map("cards")
+}
+
+model Tag {
+  id      String  @id @default(uuid())
+  tagName String
+  color   String?
+  Card    Card?   @relation(fields: [cardId], references: [id])
+  cardId  String?
+
+  @@map("tags")
+}
+
 enum Role {
   ADMIN
   USER
+}
+
+enum ProjectTypeEnum {
+  INPROGRESS
+  ASSIGNED
+  PENDING
+  INREVIEW
+  BLOCKED
+  COMPLETED
+  REJECTED
+  CANCELLED
+  SCHEDULED
+  DEFERRED
+}
+
+enum DocumentType {
+  WORD
+  PDF
+  EXCEL
+  PPTX
+  IMAGE
 }

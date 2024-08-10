@@ -8,6 +8,12 @@ import { JwtAuthGuard } from '@auth/guards/jwt-auth-guard';
 import { UploadModule } from './upload/upload.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { ProjectModule } from './project/project.module';
+import { BoardModule } from './board/board.module';
+import { CardModule } from './card/card.module';
+import { TaskModule } from './task/task.module';
+import { TagModule } from './tag/tag.module';
+import { DocumentModule } from './document/document.module';
 
 @Module({
     imports: [
@@ -20,6 +26,12 @@ import { join } from 'path';
         AuthModule,
         ConfigModule.forRoot({ isGlobal: true }),
         UploadModule,
+        ProjectModule,
+        BoardModule,
+        CardModule,
+        TaskModule,
+        TagModule,
+        DocumentModule,
     ],
     providers: [
         {
