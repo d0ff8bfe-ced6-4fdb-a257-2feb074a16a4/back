@@ -1,0 +1,52 @@
+version: '3.5'
+
+services:
+
+  nest:
+    container_name: nest_back
+    build: ../../
+    depends_on:
+      - postgres
+    ports:
+      - "3000:3000"
+    networks:
+      - postgres
+    restart: unless-stopped
+
+  postgres:
+    container_name: postgres_db
+    build: ./postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123456
+      POSTGRES_DB: aboba_db
+      PGDATA: /data/postgres
+    volumes:
+      - postgres:${PGDATA:-/data/postgres}
+    ports:
+      - "5432:5432"
+    networks:
+      - postgres
+    restart: unless-stopped
+
+  pgadmin:
+    container_name: pgadmin
+    build: ./pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: 123456
+    volumes:
+      - pgadmin:/root/.pgadmin
+    ports:
+      - "5050:80"
+    networks:
+      - postgres
+    restart: unless-stopped
+
+networks:
+  postgres:
+    driver: bridge
+
+volumes:
+  postgres:
+  pgadmin:
